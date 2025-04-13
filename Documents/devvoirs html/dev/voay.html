@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Paramètre Mignon</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #fffafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .setting-container {
+      background: #ffe6f2;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(255, 182, 193, 0.3);
+      text-align: center;
+      width: 300px;
+    }
+
+    .setting-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #ff4da6;
+      margin-bottom: 20px;
+    }
+
+    .setting-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 15px 20px;
+      border-radius: 15px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+      font-size: 18px;
+      color: #444;
+    }
+
+    /* Cute toggle switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ffd6e7;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "🎵";
+      height: 22px;
+      width: 22px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 22px;
+      font-size: 14px;
+    }
+
+    input:checked + .slider {
+      background-color: #c6a0ff;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+      content: "🔇";
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="setting-container">
+    <div class="setting-title">Paramètres Mignons 💕</div>
+
+    <div class="setting-option">
+      Sons du clavier
+      <label class="switch">
+        <input type="checkbox" onchange="toggleSound(this)">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <script>
+    function toggleSound(el) {
+      if (el.checked) {
+        alert("🎵 Les sons sont activés !");
+      } else {
+        alert("🔇 Les sons sont désactivés !");
+      }
+    }
+  </script>
+</body>
+</html>

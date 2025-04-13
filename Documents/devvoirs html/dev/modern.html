@@ -1,0 +1,34 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Web Moderne 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="modern.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Navbar -->
+    <nav class="flex justify-between items-center p-6 bg-gray-800 shadow-lg">
+        <h1 class="text-2xl font-bold">MonSite</h1>
+        <ul class="flex space-x-6">
+            <li><a href="acceuil.html" class="hover:text-blue-400">Accueil</a></li>
+            <li><a href="#" class="hover:text-blue-400">Services</a></li>
+            <li><a href="#" class="hover:text-blue-400">Contact</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="flex flex-col items-center justify-center h-screen text-center p-10">
+        <h2 class="text-5xl font-extrabold mb-4">Bienvenue en 2025</h2>
+        <p class="text-lg text-gray-400 mb-6">Un design épuré et moderne pour vos projets.</p>
+        <a href="#" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg text-lg font-semibold transition">Découvrir</a>
+    </section>
+
+    <!-- Script pour les animations -->
+    <script  src="modern.js">
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelector("h2").classList.add("animate-bounce");
+        });
+    </script>
+</body>
+</html>
