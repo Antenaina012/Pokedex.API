@@ -1,0 +1,18 @@
+# Ignore all files in parent directories
+../*
+
+# Allow the project directory
+!/Mystery-Box-Typing/
+
+# Ignore system files and temporary files
+*.tmp
+*.iso
+*.xmi
+*.pgn
+*.txt
+*.lock
+*.json
+
+# Ignore hidden files and directories
+.* 
+!.gitignore
