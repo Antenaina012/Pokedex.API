@@ -8,7 +8,24 @@ function App() {
   const [types, setTypes] = useState([]);
   const [selectedType, setSelectedType] = useState('all');
   const [isVisible, setIsVisible] = useState(true);
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'dark'; // par défaut dark
+});
+const [isRotating, setIsRotating] = useState(false);
 
+const handleThemeClick = () => {
+  toggleTheme(); // ton ancien comportement
+  setIsRotating(true);
+  setTimeout(() => setIsRotating(false), 1000);
+};
+
+  
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+  };
+  
   const toggleVisibility = () => {
     setIsVisible(!isVisible);};
 
@@ -50,17 +67,24 @@ function App() {
   };
 
   return (
-    <div className='bigContainer'>
-        <div className='Navbar'>
+    <div className={`bigContainer ${theme}`}>
+        <div>
           <ul>
             <li>
               <img src={image} alt="Pokemon" />
             </li>
             <li>
-            <img src={img} alt="pokedex" className='pokedex1'/> <h1 className='tittle'>wanna see some pokémons ?</h1>
+            <img  src="public/pngwing.com.png"
+                  onClick={handleThemeClick}
+                  className={`theme-toggle-button ${isRotating ? 'rotate' : ''}`}
+                />
+              </li>
+
+            <li>
+            <img src={img} alt="pokedex" className='pokedex1'/> <h1 className='tittle'>wanna see some pokemon ?</h1>
             </li>
             <li>      <button onClick={toggleVisibility} className="toggle-button">
-        {isVisible ? 'Cacher' : 'Montrer'} les pokémons</button></li>
+        {isVisible ? 'Hide' : 'Show'} pokemon </button></li>
             </ul>
               <div className="filter-container">
             <label htmlFor="type-select">Filtrer par catégorie : </label>
