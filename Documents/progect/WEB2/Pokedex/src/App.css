@@ -1,17 +1,86 @@
 *{
-  background-image:url(../public/bg.jpg);
-  background-size: cover;
+  text-decoration: none;
+  list-style: none;
+
+}body{
+   position: sticky; 
+   background-image:url(bg2.png) ;
+   background-size: cover;
+   height: 100%;
+   width: 100%;
+}
+.bigContainer{
+  background-image:url(bg2.png) ;
 }
 .Navbar{
+  background-image:url(../public/bg.jpg);
   position: absolute;
   top: 10px;
   border-radius: 20px;
   width: 95%;
-  margin-left: 0%;
+  height: 40%;
+  margin-left: 3%;
 }.Navbar ul {
   position: relative;
 }.Navbar ul li img{
   background-image: none;
 width: 30%;
 height: 20%;
+}
+.pokedex1{
+  width: 30%;
+  margin-left: 70%;
+  margin-top: -10%;
+}
+.pokemon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.pokemon-card {
+  background-color: #c300ffb9;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.pokemon-card:hover {
+  transform: scale(1.05);
+}
+
+.pokemon-card img {
+  width: 80px;
+  height: 80px;
+}
+.body{
+  position: relative;
+  margin-top: 20%;
+}
+.content-box {
+  padding: 20px;
+  margin: 10px;
+  transition: opacity 0.3s ease;
+}
+
+.hidden {
+  display: none;
+
+}
+
+.toggle-button {
+  padding: 8px 16px;
+  background-color: #000000;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.toogle-button:hover{
+  background-color: #45a049;
+  transform: scale(1.05);
+}.tittle{
+  top:-80%;
 }
