@@ -8,6 +8,9 @@ function App() {
   const [types, setTypes] = useState([]);
   const [selectedType, setSelectedType] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [flippingIndex, setFlippingIndex] = useState(null);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+
 
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || 'dark';
@@ -65,11 +68,11 @@ function App() {
   };
 
   return (
-    <div className={`bigContainer ${theme}`}>
+      <div className={`bigContainer ${theme} ${isSearchFocused ? "blur-active" : ""}`}>
       <div>
-        <ul>
+        <ul className='nav_title'>
           <li>
-            <img src={image} alt="Pokémon" />
+            <img className='POKEMON' src={image} alt="Pokémon" />
           </li>
           <li>
             <img
@@ -77,9 +80,6 @@ function App() {
               onClick={handleThemeClick}
               className={`theme-toggle-button ${isRotating ? 'rotate' : ''}`}
             />
-          </li>
-          <li>
-            <img src={img} alt="pokedex" className='pokedex1' />
           </li>
 
         </ul>
@@ -96,16 +96,23 @@ function App() {
           </select>
         </div>
 
-        <input
-          type="text"
-          placeholder="Rechercher un Pokémon..."
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          style={{ margin: "20px 0", padding: "8px", width: "200px" }}
-        />
+                    <input
+                      type="text"
+                      placeholder="Rechercher un Pokémon..."
+                      value={searchTerm}
+                      onChange={e => setSearchTerm(e.target.value)}
+                      onFocus={() => setIsSearchFocused(true)}
+                      onBlur={() => setIsSearchFocused(false)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.target.blur(); 
+                        }
+                      }}
+                      className={`search-bar ${isSearchFocused ? "expanded" : ""}`}
+                    />
 
         <div className="content-box">
-          <div className="pokemon-grid">
+        <div className={`pokemon-grid ${theme}`}>
             {pokemonList
               .filter(pokemon =>
                 pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -118,8 +125,15 @@ function App() {
                 return (
                   <div
                     key={index}
-                    className="pokemon-card"
-                    onClick={() => setSelectedCard({ name: pokemon.name, id })}
+                    className={`pokemon-card ${flippingIndex === index ? 'card-flip' : ''}`}
+                    onClick={() => {
+                        setFlippingIndex(index); 
+                            setTimeout(() => {
+                              setSelectedCard({ name: pokemon.name, id });
+                              setFlippingIndex(null); 
+                            }, 600); 
+                        }}
+
                   >
                     <img
                       src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
@@ -133,20 +147,35 @@ function App() {
         </div>
       </div>
 
-      {/* Modal affichage carte en grand */}
-      {selectedCard && (
-        <div className="modal" onClick={() => setSelectedCard(null)}>
-          <div className="modal-content">
-            <div className="pokemon-card large">
-              <img
-                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedCard.id}.png`}
-                alt={selectedCard.name}
-              />
-              <p>#{selectedCard.id} {selectedCard.name.charAt(0).toUpperCase() + selectedCard.name.slice(1)}</p>
+        {selectedCard && (
+          <div
+            className="modal"
+            onClick={() => setSelectedCard(null)}
+          >
+            <div
+              className="modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="pokemon-card large">
+                              <button
+                className="close-button"
+                onClick={() => setSelectedCard(null)}
+              >
+                ✖
+              </button>
+                <img
+                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedCard.id}.png`}
+                  alt={selectedCard.name}
+                />
+                <p>
+                  #{selectedCard.id}{" "}
+                  {selectedCard.name.charAt(0).toUpperCase() + selectedCard.name.slice(1)}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
     </div>
   );
 }
