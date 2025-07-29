@@ -7,12 +7,13 @@ function App() {
   const [pokemonList, setPokemonList] = useState([]);
   const [types, setTypes] = useState([]);
   const [selectedType, setSelectedType] = useState('all');
-  const [isVisible, setIsVisible] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || 'dark';
   });
   const [isRotating, setIsRotating] = useState(false);
-  const [selectedCard, setSelectedCard] = useState(null); // Nouvelle carte sélectionnée
+  const [selectedCard, setSelectedCard] = useState(null); 
 
   const handleThemeClick = () => {
     toggleTheme();
@@ -26,9 +27,6 @@ function App() {
     localStorage.setItem('theme', newTheme);
   };
 
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
-  };
 
   useEffect(() => {
     fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
@@ -71,7 +69,7 @@ function App() {
       <div>
         <ul>
           <li>
-            <img src={image} alt="Pokemon" />
+            <img src={image} alt="Pokémon" />
           </li>
           <li>
             <img
@@ -82,13 +80,8 @@ function App() {
           </li>
           <li>
             <img src={img} alt="pokedex" className='pokedex1' />
-            <h1 className='tittle'>wanna see some pokemon ?</h1>
           </li>
-          <li>
-            <button onClick={toggleVisibility} className="toggle-button">
-              {isVisible ? 'Hide' : 'Show'} pokemon
-            </button>
-          </li>
+
         </ul>
 
         <div className="filter-container">
@@ -103,27 +96,39 @@ function App() {
           </select>
         </div>
 
-        <div className={`content-box ${isVisible ? '' : 'hidden'}`}>
-          <div className="pokemon-grid">
-            {pokemonList.map((pokemon, index) => {
-              const id = pokemon.url
-                ? pokemon.url.split("/")[6]
-                : index + 1;
+        <input
+          type="text"
+          placeholder="Rechercher un Pokémon..."
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+          style={{ margin: "20px 0", padding: "8px", width: "200px" }}
+        />
 
-              return (
-                <div
-                  key={index}
-                  className="pokemon-card"
-                  onClick={() => setSelectedCard({ name: pokemon.name, id })}
-                >
-                  <img
-                    src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
-                    alt={pokemon.name}
-                  />
-                  <p>#{id} {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</p>
-                </div>
-              );
-            })}
+        <div className="content-box">
+          <div className="pokemon-grid">
+            {pokemonList
+              .filter(pokemon =>
+                pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map((pokemon, index) => {
+                const id = pokemon.url
+                  ? pokemon.url.split("/")[6]
+                  : index + 1;
+
+                return (
+                  <div
+                    key={index}
+                    className="pokemon-card"
+                    onClick={() => setSelectedCard({ name: pokemon.name, id })}
+                  >
+                    <img
+                      src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
+                      alt={pokemon.name}
+                    />
+                    <p>#{id} {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</p>
+                  </div>
+                );
+              })}
           </div>
         </div>
       </div>
