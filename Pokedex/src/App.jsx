@@ -74,6 +74,8 @@ function App() {
           <li>
             <img className='POKEMON' src={image} alt="Pokémon" />
           </li>
+
+
           <li>
             <img
               src="public/pngwing.com.png"
@@ -83,19 +85,7 @@ function App() {
           </li>
 
         </ul>
-
-        <div className="filter-container">
-          <label htmlFor="type-select">Filtrer par catégorie : </label>
-          <select id="type-select" onChange={handleTypeChange} value={selectedType}>
-            <option value="all">Tous</option>
-            {types.map((type) => (
-              <option key={type.name} value={type.name}>
-                {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
-              </option>
-            ))}
-          </select>
-        </div>
-
+                  <div className='filter-search'>
                     <input
                       type="text"
                       placeholder="Rechercher un Pokémon..."
@@ -110,6 +100,20 @@ function App() {
                       }}
                       className={`search-bar ${isSearchFocused ? "expanded" : ""}`}
                     />
+        <div className="filter-container">
+          <label htmlFor="type-select">Filtrer par catégorie : </label>
+          <select id="type-select" onChange={handleTypeChange} value={selectedType}>
+            <option value="all">Tous</option>
+            {types.map((type) => (
+              <option key={type.name} value={type.name}>
+                {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+                  </div>
+
 
         <div className="content-box">
         <div className={`pokemon-grid ${theme}`}>
