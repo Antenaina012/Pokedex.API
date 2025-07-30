@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import image from '/src/wp3636965-removebg-preview.png';
 import './App.css';
-import img from '/src/assets/pokedex.png';
+import img from '/src/assets/pokedex.png'
+import { useRef } from "react";
 
 function App() {
   const [pokemonList, setPokemonList] = useState([]);
@@ -10,11 +11,32 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [flippingIndex, setFlippingIndex] = useState(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [pokemonDetails, setPokemonDetails] = useState(null);
+  const [selectedTypeIndex, setSelectedTypeIndex] = useState(0);
+  const typeScrollRef = useRef(null);
+
 
 
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || 'dark';
   });
+
+  const handleWheelScroll = (e) => {
+  if (!types || types.length === 0) return;
+  if (e.deltaY > 0) {
+    setSelectedTypeIndex((prev) => (prev + 1) % types.length);
+  } else {
+    setSelectedTypeIndex((prev) => (prev - 1 + types.length) % types.length);
+  }
+};
+
+
+
+const handleCardClick = (pokemon) => {
+  setSelectedCard(pokemon.id);        
+  setPokemonDetails(pokemon);         
+};
+
   const [isRotating, setIsRotating] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null); 
 
@@ -29,12 +51,33 @@ function App() {
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
   };
+  
 
 
   useEffect(() => {
-    fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
+    
+       fetch("https://pokeapi.co/api/v2/pokemon?limit=1000&offset=0")
       .then((res) => res.json())
-      .then((data) => setPokemonList(data.results))
+.then(async (data) => {
+  const detailedList = await Promise.all(
+    data.results.map(async (pokemon) => {
+      const res = await fetch(pokemon.url);
+      const details = await res.json();
+
+      return {
+        id: details.id,
+        name: details.name,
+        url: pokemon.url,
+        image: details.sprites.other["official-artwork"].front_default,
+        types: details.types,
+        stats: details.stats,
+        abilities: details.abilities,
+      };
+    })
+  );
+  setPokemonList(detailedList);
+})
+
       .catch((err) => console.error("Erreur:", err));
 
     fetch("https://pokeapi.co/api/v2/type")
@@ -64,11 +107,14 @@ function App() {
             .map((p) => p.pokemon);
           setPokemonList(filtered);
         });
-    }
+          }
+
   };
+
 
   return (
       <div className={`bigContainer ${theme} ${isSearchFocused ? "blur-active" : ""}`}>
+        <p> Touch Pokeball for theme</p>
       <div>
         <ul className='nav_title'>
           <li>
@@ -85,7 +131,9 @@ function App() {
           </li>
 
         </ul>
+      
                   <div className='filter-search'>
+ 
                     <input
                       type="text"
                       placeholder="Rechercher un Pokémon..."
@@ -101,21 +149,34 @@ function App() {
                       className={`search-bar ${isSearchFocused ? "expanded" : ""}`}
                     />
         <div className="filter-container">
-          <label htmlFor="type-select">Filtrer par catégorie : </label>
-          <select id="type-select" onChange={handleTypeChange} value={selectedType}>
-            <option value="all">Tous</option>
-            {types.map((type) => (
-              <option key={type.name} value={type.name}>
-                {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
-              </option>
-            ))}
-          </select>
+                      <div
+                ref={typeScrollRef}
+                className="type-scroll"
+                onWheel={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  handleWheelScroll(e);
+                }}
+              >
+                {types.length > 0 && (
+                  <div className="type-display">
+                    {types[selectedTypeIndex]?.name?.charAt(0).toUpperCase() +
+                      types[selectedTypeIndex]?.name?.slice(1)}
+                  </div>
+                )}
+              </div>
         </div>
+        
 
                   </div>
 
 
         <div className="content-box">
+          <h2>
+            <strong>
+              List of pokemon :
+            </strong>
+          </h2>
         <div className={`pokemon-grid ${theme}`}>
             {pokemonList
               .filter(pokemon =>
@@ -133,15 +194,14 @@ function App() {
                     onClick={() => {
                         setFlippingIndex(index); 
                             setTimeout(() => {
-                              setSelectedCard({ name: pokemon.name, id });
+                              setSelectedCard({ ...pokemon, id });
                               setFlippingIndex(null); 
                             }, 600); 
                         }}
 
                   >
-                    <img
-                      src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
-                      alt={pokemon.name}
+                    <img src={pokemon.image} 
+                         alt={pokemon.name}
                     />
                     <p>#{id} {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</p>
                   </div>
@@ -160,24 +220,44 @@ function App() {
               className="modal-content"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="pokemon-card large">
-                              <button
-                className="close-button"
-                onClick={() => setSelectedCard(null)}
-              >
-                ✖
-              </button>
-                <img
-                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedCard.id}.png`}
-                  alt={selectedCard.name}
-                />
-                <p>
-                  #{selectedCard.id}{" "}
-                  {selectedCard.name.charAt(0).toUpperCase() + selectedCard.name.slice(1)}
-                </p>
+                <div className="pokemon-card large">
+                  <button
+                    className="close-button"
+                    onClick={() => setSelectedCard(null)}
+                  >
+                    ✖
+                  </button>
+                  <img
+                    src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedCard.id}.png`}
+                    alt={selectedCard.name}
+                  />
+                  <p>
+                    #{selectedCard.id}{" "}
+                    {selectedCard.name.charAt(0).toUpperCase() + selectedCard.name.slice(1)}
+                  </p>
+
+                          {pokemonDetails && pokemonDetails.stats && pokemonDetails.types ? (
+                            <div className="card-info">
+                              <p><strong>Type(s) :</strong> {pokemonDetails.types.map(t => t.type.name).join(', ')}</p>
+                              <p><strong>HP :</strong> {pokemonDetails.stats.find(s => s.stat.name === 'hp')?.base_stat}</p>
+                              <p><strong>Attaque :</strong> {pokemonDetails.stats.find(s => s.stat.name === 'attack')?.base_stat}</p>
+                              <p><strong>Défense :</strong> {pokemonDetails.stats.find(s => s.stat.name === 'defense')?.base_stat}</p>
+                              <p><strong>Vitesse :</strong> {pokemonDetails.stats.find(s => s.stat.name === 'speed')?.base_stat}</p>
+                              <p><strong>Att. Spé :</strong> {pokemonDetails.stats.find(s => s.stat.name === 'special-attack')?.base_stat}</p>
+                              <p><strong>Déf. Spé :</strong> {pokemonDetails.stats.find(s => s.stat.name === 'special-defense')?.base_stat}</p>
+                              <p><strong>Capacités :</strong> {pokemonDetails.abilities.map(a => a.ability.name).join(', ')}</p>
+
+                            </div>
+                          ) : (
+                            <p style={{ textAlign: "center", padding: "1rem" }}>Chargement des détails...</p>
+                          )}
+                          
+                  
+                </div>
+
               </div>
             </div>
-          </div>
+          
         )}
 
     </div>
